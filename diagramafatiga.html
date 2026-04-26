@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulador de Ciclos de Carga - Fatiga</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; background-color: #f0f2f5; }
+        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 850px; }
+        h2 { color: #1a73e8; text-align: center; margin-bottom: 10px; }
+        p { font-size: 0.95em; color: #555; line-height: 1.5; }
+        .controls { display: flex; justify-content: center; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+        button { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: background 0.3s; background: #e8f0fe; color: #1a73e8; }
+        button.active { background: #1a73e8; color: white; }
+        canvas { background: #fff; border: 1px solid #eee; border-radius: 8px; width: 100%; height: auto; }
+        .legend { display: flex; justify-content: center; gap: 20px; margin-top: 15px; font-size: 0.9em; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .color-box { width: 12px; height: 12px; border-radius: 2px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Simulador de Ciclos de Carga y Fatiga</h2>
+    <p>Visualización de la variación de tensión (&sigma;) en el tiempo según el modo de conducción. Este análisis es el criterio de diseño principal para el acero S355.</p>
+    
+    <div class="controls">
+        <button id="btn-autovia" onclick="setMode('autovia')" class="active">Autovía (Carga Suave)</button>
+        <button id="btn-frenado" onclick="setMode('frenado')">Frenado/Aceleración (Carga Alternante)</button>
+        <button id="btn-baches" onclick="setMode('baches')">Carretera con Baches (Carga Irregular)</button>
+    </div>
+
+    <canvas id="loadChart" width="800" height="400"></canvas>
+
+    <div class="legend">
+        <div class="legend-item"><div class="color-box" style="background: #1a73e8;"></div> Tensión Instantánea</div>
+        <div class="legend-item"><div class="color-box" style="background: #ea4335; height: 2px;"></div> Tensión Media (&sigma;m)</div>
+        <div class="legend-item"><div class="color-box" style="background: rgba(52, 168, 83, 0.2); border: 1px dashed #34a853;"></div> Amplitud Alternante (&sigma;a)</div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('loadChart');
+    const ctx = canvas.getContext('2d');
+    let mode = 'autovia';
+    let time = 0;
+    let points = [];
+    const maxPoints = 200;
+
+    const configs = {
+        autovia: { amp: 20, freq: 0.05, offset: 33.35, noise: 2 },
+        frenado: { amp: 60, freq: 0.03, offset: 33.35, noise: 0 },
+        baches: { amp: 40, freq: 0.15, offset: 33.35, noise: 15 }
+    };
+
+    function setMode(newMode) {
+        mode = newMode;
+        document.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('btn-' + newMode).classList.add('active');
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const config = configs[mode];
+        
+        // Generar nuevo punto
+        let targetSa = config.amp;
+        let val = config.offset + Math.sin(time * config.freq) * targetSa + (Math.random() - 0.5) * config.noise;
+        points.push(val);
+        if (points.length > maxPoints) points.shift();
+        time += 1;
+
+        const margin = 50;
+        const w = canvas.width - 2 * margin;
+        const h = canvas.height - 2 * margin;
+        const scaleY = h / 200;
+
+        const toY = (v) => canvas.height / 2 - (v * scaleY);
+
+        // Dibujar Ejes
+        ctx.strokeStyle = '#ccc';
+        ctx.beginPath();
+        ctx.moveTo(margin, canvas.height - margin);
+        ctx.lineTo(canvas.width - margin, canvas.height - margin); // Eje T (tiempo)
+        ctx.moveTo(margin, margin);
+        ctx.lineTo(margin, canvas.height - margin); // Eje Sigma (tensión)
+        ctx.stroke();
+
+        // Área de Tensión Alternante (Sigma a)
+        ctx.fillStyle = 'rgba(52, 168, 83, 0.1)';
+        const rectYTop = toY(config.offset + config.amp);
+        const rectYBottom = toY(config.offset - config.amp);
+        ctx.fillRect(margin, rectYTop, w, rectYBottom - rectYTop);
+        
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = '#34a853';
+        ctx.strokeRect(margin, rectYTop, w, rectYBottom - rectYTop);
+        ctx.setLineDash([]);
+
+        // Línea de Tensión Media (Sigma m)
+        ctx.strokeStyle = '#ea4335';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(margin, toY(config.offset));
+        ctx.lineTo(canvas.width - margin, toY(config.offset));
+        ctx.stroke();
+
+        // Dibujar curva de tensión
+        ctx.strokeStyle = '#1a73e8';
+        ctx.lineWidth = 3;
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        points.forEach((p, i) => {
+            const x = margin + (i / maxPoints) * w;
+            const y = toY(p);
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // Textos
+        ctx.fillStyle = '#ea4335';
+        ctx.fillText('σm (Media)', margin + 5, toY(config.offset) - 5);
+        ctx.fillStyle = '#34a853';
+        ctx.fillText('σa (Alternante)', margin + 5, rectYTop + 15);
+        ctx.fillStyle = '#555';
+        ctx.fillText('Tensión (MPa)', 10, margin - 10);
+        ctx.fillText('Tiempo (s)', canvas.width - 70, canvas.height - 15);
+
+        requestAnimationFrame(draw);
+    }
+
+    draw();
+</script>
+</body>
+</html>
