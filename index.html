@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 10px; }
+        .menu { display: flex; flex-direction: column; gap: 10px; }
+        button { padding: 10px; cursor: pointer; background: #0078d4; color: white; border: none; border-radius: 4px; }
+        iframe { border: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; display: none; }
+    </style>
+</head>
+<body>
+    <div id="setup-menu" class="menu">
+        <h3>Selecciona el gráfico para esta diapositiva:</h3>
+        <button onclick="saveAndLoad('diagramafatiga.html')">Diagrama de Fatiga</button>
+        <button onclick="saveAndLoad('tensiones.html')">Cálculo de Tensiones</button>
+        <button onclick="saveAndLoad('otro.html')">Otro Gráfico</button>
+    </div>
+    
+    <iframe id="viewer"></iframe>
+
+    <script>
+        Office.onReady((info) => {
+            // Comprobar si ya habíamos elegido un gráfico antes para esta diapositiva
+            const savedFile = Office.context.document.settings.get("selectedFile");
+            if (savedFile) {
+                loadChart(savedFile);
+            }
+        });
+
+        function saveAndLoad(fileName) {
+            // Guardar la elección en la diapositiva
+            Office.context.document.settings.set("selectedFile", fileName);
+            Office.context.document.settings.saveAsync((result) => {
+                loadChart(fileName);
+            });
+        }
+
+        function loadChart(fileName) {
+            document.getElementById('setup-menu').style.display = 'none';
+            const ifr = document.getElementById('viewer');
+            ifr.src = fileName;
+            ifr.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
