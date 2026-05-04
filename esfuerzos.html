@@ -157,7 +157,7 @@
     function drawShear(x, y, w) {
         const height = 70 * progress;
         ctx.fillStyle = "rgba(234, 67, 53, 0.1)";
-        ctx.fillRect(x, y, w, height); // Hacia abajo (-)
+        ctx.fillRect(x, y - height, w, height); // Hacia abajo (-)
         ctx.strokeStyle = "#ea4335";
         ctx.lineWidth = 2;
         ctx.strokeRect(x, y, w, height);
