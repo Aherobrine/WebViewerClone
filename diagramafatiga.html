@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Simulador de Ciclos de Carga - Fatiga</title>
+    <title>Simulador de ciclos de carga - Fatiga</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; background-color: #f0f2f5; }
         .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 850px; }
@@ -20,21 +20,21 @@
 <body>
 
 <div class="container">
-    <h2>Simulador de Ciclos de Carga y Fatiga</h2>
-    <p>Visualización de la variación de tensión (&sigma;) en el tiempo según el modo de conducción. Este análisis es el criterio de diseño principal para el acero S355.</p>
+    <h2>Simulador de ciclos de carga y fatiga</h2>
+    <p>Visualización de la variación de tensión (&sigma;) en el tiempo según el modo de conducción. Este análisis es el criterio de diseño principal para el acero S355JR.</p>
     
     <div class="controls">
-        <button id="btn-autovia" onclick="setMode('autovia')" class="active">Autovía (Carga Suave)</button>
-        <button id="btn-frenado" onclick="setMode('frenado')">Frenado/Aceleración (Carga Alternante)</button>
-        <button id="btn-baches" onclick="setMode('baches')">Carretera con Baches (Carga Irregular)</button>
+        <button id="btn-autovia" onclick="setMode('autovia')" class="active">Autovía (Carga suave)</button>
+        <button id="btn-frenado" onclick="setMode('frenado')">Frenado/Aceleración (Carga alternante)</button>
+        <button id="btn-baches" onclick="setMode('baches')">Carretera con baches (Carga irregular)</button>
     </div>
 
     <canvas id="loadChart" width="800" height="400"></canvas>
 
     <div class="legend">
-        <div class="legend-item"><div class="color-box" style="background: #1a73e8;"></div> Tensión Instantánea</div>
-        <div class="legend-item"><div class="color-box" style="background: #ea4335; height: 2px;"></div> Tensión Media (&sigma;m)</div>
-        <div class="legend-item"><div class="color-box" style="background: rgba(52, 168, 83, 0.2); border: 1px dashed #34a853;"></div> Amplitud Alternante (&sigma;a)</div>
+        <div class="legend-item"><div class="color-box" style="background: #1a73e8;"></div> Tensión instantánea</div>
+        <div class="legend-item"><div class="color-box" style="background: #ea4335; height: 2px;"></div> Tensión media (&sigma;m)</div>
+        <div class="legend-item"><div class="color-box" style="background: rgba(52, 168, 83, 0.2); border: 1px dashed #34a853;"></div> Amplitud alternante (&sigma;a)</div>
     </div>
 </div>
 
