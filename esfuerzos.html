@@ -30,9 +30,9 @@
     <p>Viga L = 180 mm | F<sub>y</sub> = 1047,7 N (↓) | F<sub>x</sub> = 1500 N (→) | M<sub>z</sub> = 120 N·m (↻)</p>
 
     <div class="controls">
-        <button id="btn-axil" onclick="setDiagram('axil')" class="active">Esfuerzo Axil (N)</button>
-        <button id="btn-shear" onclick="setDiagram('shear')">Esfuerzo Cortante (V)</button>
-        <button id="btn-moment" onclick="setDiagram('moment')">Momento Flector (M)</button>
+        <button id="btn-axil" onclick="setDiagram('axil')" class="active">Esfuerzo axil (N)</button>
+        <button id="btn-shear" onclick="setDiagram('shear')">Esfuerzo cortante (V)</button>
+        <button id="btn-moment" onclick="setDiagram('moment')">Momento flector (M)</button>
     </div>
 
     <div class="canvas-container">
@@ -97,9 +97,9 @@
         ctx.fillStyle = "#555";
         ctx.font = "bold 16px Segoe UI";
         let title = "";
-        if (currentDiagram === 'axil') title = "Diagrama de Esfuerzo Axil (N)";
-        if (currentDiagram === 'shear') title = "Diagrama de Esfuerzo Cortante (V)";
-        if (currentDiagram === 'moment') title = "Diagrama de Momento Flector (M)";
+        if (currentDiagram === 'axil') title = "Diagrama de esfuerzo axil (N)";
+        if (currentDiagram === 'shear') title = "Diagrama de esfuerzo cortante (V)";
+        if (currentDiagram === 'moment') title = "Diagrama de momento flector (M)";
         ctx.fillText(title, margin, yDiagBase - 150);
 
         // 4. DIBUJAR EL DIAGRAMA SELECCIONADO
